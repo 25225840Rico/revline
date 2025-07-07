@@ -1,0 +1,1343 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RevLine | Diagnóstico y Mecánica Móvil en Antofagasta</title>
+<meta name="description" content="Diagnóstico automotriz y mecánica móvil en Antofagasta. Servicios a domicilio para particulares y empresas. ¡Reserva ahora!">
+<meta name="keywords" content="diagnóstico automotriz, mecánica móvil, Antofagasta, diagnóstico computarizado, mecánica a domicilio, servicios automotrices, reparación de autos">
+<meta name="robots" content="index, follow">
+<meta name="author" content="RevLine">
+<meta property="og:title" content="RevLine | Diagnóstico y Mecánica Móvil en Antofagasta">
+<meta property="og:description" content="Servicios profesionales de diagnóstico automotriz y mecánica móvil en Antofagasta. Atención a domicilio para particulares y empresas.">
+<meta property="og:image" content="https://revline.cl/og-image.jpg">
+<meta property="og:url" content="https://revline.cl">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RevLine | Diagnóstico y Mecánica Móvil en Antofagasta">
+<meta name="twitter:description" content="Servicios profesionales de diagnóstico automotriz y mecánica móvil en Antofagasta. Atención a domicilio.">
+<meta name="twitter:image" content="https://revline.cl/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+<link rel="preload" as="video" href="/videos/timelapse.mp4">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<link rel="icon" type="image/png" href="/favicon.png">
+<style>
+  :root {
+    --primary: #FF3D00;
+    --primary-dark: #D03400;
+    --primary-light: rgba(255, 61, 0, 0.1);
+    --text: #f0f0f0;
+    --text-light: #aaa;
+    --bg: #121212;
+    --card-bg: rgba(30, 30, 30, 0.9);
+    --border: rgba(255, 255, 255, 0.08);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --transition: all 0.3s ease;
+    --carbon-bg: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"><rect width="50" height="50" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="0.5"/></svg>');
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg) var(--carbon-bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 30%, rgba(255, 61, 0, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(255, 61, 0, 0.05) 0%, transparent 20%);
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.5;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  section {
+    padding: 80px 0;
+    position: relative;
+  }
+
+  .section-title {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .section-title h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(to right, var(--primary), #FF7043);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(255, 61, 0, 0.2);
+  }
+
+  .section-title p {
+    color: var(--text-light);
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1rem;
+  }
+
+  header {
+    background: rgba(20, 20, 20, 0.85);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow);
+    transition: transform 0.4s ease, opacity 0.4s ease, background 0.3s ease, backdrop-filter 0.3s ease;
+  }
+
+  header.scrolled {
+    background: rgba(15, 15, 15, 0.95);
+    backdrop-filter: blur(12px);
+    padding: 10px 0;
+  }
+
+  header.hidden {
+    transform: translateY(-100%);
+    opacity: 0.5;
+  }
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    font-weight: 800;
+    font-size: 1.8rem;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span:first-child {
+    color: var(--primary);
+  }
+
+  nav {
+    role: "navigation";
+  }
+
+  nav ul {
+    display: flex;
+    list-style: none;
+    align-items: center;
+    gap: 30px;
+  }
+
+  nav ul li {
+    position: relative;
+  }
+
+  nav ul li a {
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    padding: 5px 0;
+    transition: color 0.3s ease;
+  }
+
+  nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  nav ul li a:hover {
+    color: var(--primary);
+  }
+
+  nav ul li a:hover::after {
+    transform: scaleX(1);
+  }
+
+  .mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-toggle:hover {
+    transform: rotate(90deg);
+  }
+
+  .hero {
+    text-align: center;
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 0;
+  }
+
+  .hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 1s ease-out;
+  }
+
+  .hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 25px;
+    line-height: 1.2;
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero p {
+    color: var(--text-light);
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeInUp 1.2s ease-out;
+  }
+
+  .btn-group {
+    animation: fadeInUp 1.4s ease-out;
+  }
+
+  .btn {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    padding: 16px 45px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    text-decoration: none;
+    border: none;
+    box-shadow: 0 5px 15px rgba(255, 61, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    gap: 10px;
+    transition: var(--transition);
+    will-change: transform;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: var(--primary-dark);
+    transition: width 0.3s ease;
+    z-index: -1;
+  }
+
+  .btn:hover::before {
+    width: 100%;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 61, 0, 0.4);
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    margin-left: 20px;
+  }
+
+  .btn-outline:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary-dark);
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+  }
+
+  .service-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    min-height: 300px;
+    transition: var(--transition);
+    will-change: transform;
+  }
+
+  .service-card.visible {
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDoAABSCAABFVgAADqXAAAXb9daH5AAAAAZSURBVHjaYmBgYMhnYmBgYGD4zwABHwAA/KgD6esbKpoAAAAASUVORK5CYII=') repeat;
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  .service-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, var(--card-bg), rgba(255, 61, 0, 0.2));
+  }
+
+  .service-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    transition: var(--transition);
+    z-index: 1;
+  }
+
+  .service-card:hover .service-icon {
+    transform: scale(1.05);
+    box-shadow: 0 0 8px rgba(255, 61, 0, 0.4);
+  }
+
+  .service-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .service-content h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .service-content p {
+    color: var(--text-light);
+    font-size: 1rem;
+  }
+
+  .service-content ul {
+    list-style: none;
+    margin-top: 10px;
+  }
+
+  .service-content ul li {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+    transition: var(--transition);
+  }
+
+  .service-content ul li:hover {
+    color: var(--primary);
+  }
+
+  .service-content ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+  }
+
+  .enterprise-section {
+    background: radial-gradient(ellipse at bottom, rgba(40, 40, 40, 0.3) 0%, rgba(18, 18, 18, 1) 70%);
+    position: relative;
+  }
+
+  .enterprise-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--carbon-bg);
+    opacity: 0.2;
+    z-index: -1;
+  }
+
+  .enterprise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+  }
+
+  .enterprise-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    min-height: 300px;
+    transition: var(--transition);
+    will-change: transform;
+  }
+
+  .enterprise-card.visible {
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .enterprise-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDoAABSCAABFVgAADqXAAAXb9daH5AAAAAZSURBVHjaYmBgYMhnYmBgYGD4zwABHwAA/KgD6esbKpoAAAAASUVORK5CYII=') repeat;
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  .enterprise-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, var(--card-bg), rgba(255, 61, 0, 0.2));
+  }
+
+  .enterprise-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .enterprise-card p {
+    color: var(--text-light);
+    font-size: 1rem;
+  }
+
+  .enterprise-card ul {
+    list-style: none;
+    margin-top: 10px;
+  }
+
+  .enterprise-card ul li {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+    transition: var(--transition);
+  }
+
+  .enterprise-card ul li:hover {
+    color: var(--primary);
+  }
+
+  .enterprise-card ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+  }
+
+  .location-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .location-info {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    position: relative;
+    backdrop-filter: blur(5px);
+  }
+
+  .location-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 61, 0, 0.05) 0%, transparent 70%);
+    z-index: -1;
+  }
+
+  .location-info h3 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: var(--primary);
+  }
+
+  .contact-item {
+    display: flex;
+    margin-bottom: 30px;
+    align-items: flex-start;
+    transition: transform 0.3s ease;
+  }
+
+  .contact-item:hover {
+    transform: translateX(5px);
+  }
+
+  .contact-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    color: var(--primary);
+    flex-shrink: 0;
+    font-size: 1.3rem;
+    transition: var(--transition);
+  }
+
+  .contact-item:hover .contact-icon {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+  }
+
+  .contact-text h4 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+
+  .contact-text p {
+    color: var(--text-light);
+    font-size: 1rem;
+  }
+
+  .map-container {
+    height: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    min-height: 450px;
+    background: var(--card-bg);
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  .map-container:hover {
+    transform: scale(1.02);
+  }
+
+  .map-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 61, 0, 0.05) 0%, transparent 70%);
+    z-index: -1;
+  }
+
+  .map-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .map-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: var(--text);
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+  }
+
+  .map-overlay p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+  }
+
+  footer {
+    background: rgba(15, 15, 15, 0.95);
+    padding: 60px 0 40px;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+
+  footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--carbon-bg);
+    opacity: 0.3;
+    z-index: -1;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+
+  .footer-col h4 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+  }
+
+  .footer-col h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary);
+  }
+
+  .footer-col p {
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-size: 1rem;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .social-links a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background: var(--primary);
+    transition: height 0.3s ease;
+    z-index: -1;
+  }
+
+  .social-links a:hover {
+    color: white;
+    transform: translateY(-3px);
+  }
+
+  .social-links a:hover::before {
+    height: 100%;
+  }
+
+  .footer-links {
+    list-style: none;
+  }
+
+  .footer-links li {
+    margin-bottom: 15px;
+  }
+
+  .footer-links li a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 1rem;
+    position: relative;
+    padding-left: 0;
+    transition: var(--transition);
+  }
+
+  .footer-links li a::before {
+    content: '›';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+    opacity: 0;
+    transition: var(--transition);
+  }
+
+  .footer-links li a:hover {
+    color: var(--primary);
+    padding-left: 20px;
+  }
+
+  .footer-links li a:hover::before {
+    opacity: 1;
+    left: 0;
+  }
+
+  .copyright {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid var(--border);
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+
+  #whatsapp-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #25D366;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1100;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+    color: white;
+    font-size: 2rem;
+    animation: pulse 2s infinite;
+    transition: var(--transition);
+  }
+
+  #whatsapp-float:hover {
+    background-color: #1ebe57;
+    transform: scale(1.1) rotate(3deg);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    animation: none;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+    70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 992px) {
+    .location-container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    section {
+      padding: 60px 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .mobile-toggle {
+      display: block;
+    }
+
+    nav ul {
+      position: fixed;
+      top: 70px;
+      left: -100%;
+      width: 100%;
+      height: calc(100vh - 70px);
+      background: rgba(20, 20, 20, 0.98);
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+      transition: left 0.4s ease;
+      gap: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    nav ul.active {
+      left: 0;
+    }
+
+    nav ul li {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    nav ul.active li {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    nav ul.active li:nth-child(1) { animation-delay: 0.1s; }
+    nav ul.active li:nth-child(2) { animation-delay: 0.2s; }
+    nav ul.active li:nth-child(3) { animation-delay: 0.3s; }
+
+    .hero {
+      padding: 100px 0 60px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .btn {
+      margin: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    .section-title h2 {
+      font-size: 2rem;
+    }
+
+    .section-title p {
+      font-size: 0.95rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .hero {
+      padding: 80px 0 50px;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+    }
+
+    section {
+      padding: 50px 0;
+    }
+
+    .service-card, .enterprise-card {
+      padding: 15px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .service-icon, .contact-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header role="banner">
+  <div class="container header-container">
+    <div class="logo">
+      <span>Rev</span><span>Line</span>
+    </div>
+    <button class="mobile-toggle" id="mobile-toggle" aria-label="Abrir menú móvil">
+      <i class="fas fa-bars"></i>
+    </button>
+    <nav role="navigation">
+      <ul id="nav-menu">
+        <li><a href="#servicios" aria-label="Servicios">Servicios</a></li>
+        <li><a href="#empresas" aria-label="Empresas">Empresas</a></li>
+        <li><a href="#ubicacion" aria-label="Contacto">Contacto</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <video class="hero-video" autoplay muted loop playsinline title="Video de fondo de servicios automotrices en Antofagasta">
+    <source src="/videos/timelapse.mp4" type="video/mp4">
+    Tu navegador no soporta videos HTML5.
+  </video>
+  <div class="container hero-content">
+    <h1>Servicios Móviles de Diagnóstico y Mecánica</h1>
+    <p>Soluciones profesionales. Atención inmediata a particulares y empresas con servicios a domicilio en toda Antofagasta.</p>
+    <div class="btn-group">
+      <a href="https://wa.me/+56968646396" target="_blank" rel="noopener" class="btn" aria-label="Reservar vía WhatsApp">
+        <i class="fab fa-whatsapp"></i> Reservar por WhatsApp
+      </a>
+      <a href="#servicios" class="btn btn-outline" aria-label="Ver servicios">Ver Servicios</a>
+    </div>
+  </div>
+</div>
+
+<section id="servicios">
+  <div class="container">
+    <div class="section-title">
+      <h2>Servicios Premium</h2>
+      <p>Ofrecemos soluciones profesionales para todo tipo de vehículos con equipamiento móvil de última generación</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-microchip"></i></div>
+        <div class="service-content">
+          <h3>Diagnóstico Computarizado</h3>
+          <p>Análisis integral de sistemas electrónicos para identificar y resolver fallas complejas.</p>
+          <ul>
+            <li>Lectura de códigos de error</li>
+            <li>Monitoreo en tiempo real</li>
+            <li>Informe técnico detallado</li>
+            <li>Análisis de rendimiento</li>
+          </ul>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-bolt"></i></div>
+        <div class="service-content">
+          <h3>Diagnóstico Eléctrico</h3>
+          <p>Evaluación de sistemas eléctricos y componentes críticos para prevenir fallas.</p>
+          <ul>
+            <li>Pruebas de batería y alternador</li>
+            <li>Revisión de sistemas de carga</li>
+            <li>Detección de cortocircuitos</li>
+            <li>Optimización de consumo</li>
+          </ul>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-tachometer-alt"></i></div>
+        <div class="service-content">
+          <h3>Reseteo de Testigos</h3>
+          <p>Eliminación de alertas y calibración de sistemas post-reparación.</p>
+          <ul>
+            <li>Check Engine, ABS, Airbag</li>
+            <li>Indicadores de mantenimiento</li>
+            <li>Calibración de sensores</li>
+            <li>Configuración de módulos</li>
+          </ul>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-search"></i></div>
+        <div class="service-content">
+          <h3>Revisión Pre-compra</h3>
+          <p>Evaluación técnica exhaustiva para garantizar tu inversión vehicular.</p>
+          <ul>
+            <li>Diagnóstico computarizado</li>
+            <li>Verificación de kilometraje</li>
+            <li>Reporte de estado general</li>
+            <li>Evaluación de accidentes previos</li>
+          </ul>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-cogs"></i></div>
+        <div class="service-content">
+          <h3>Mantenimiento Esencial</h3>
+          <p>Servicios clave para mantener tu vehículo en óptimas condiciones.</p>
+          <ul>
+            <li>Cambio de batería</li>
+            <li>Sustitución de bujías</li>
+            <li>Reemplazo de sensores</li>
+            <li>Limpieza de inyectores</li>
+          </ul>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-oil-can"></i></div>
+        <div class="service-content">
+          <h3>Cambio de Fluidos</h3>
+          <p>Servicio profesional para prolongar la vida de tu motor y sistemas.</p>
+          <ul>
+            <li>Aceite sintético y convencional</li>
+            <li>Filtros de aire y aceite</li>
+            <li>Líquido de frenos y dirección</li>
+            <li>Refrigerante y líquidos</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="empresas" class="enterprise-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Soluciones Empresariales</h2>
+      <p>Planes especializados para flotas de transporte, minería y logística</p>
+    </div>
+    <div class="enterprise-grid">
+      <div class="enterprise-card">
+        <h3>Plan Transporte</h3>
+        <p>Mantenimiento programado para flotas de transporte con atención in situ.</p>
+        <ul>
+          <li>Diagnóstico preventivo periódico</li>
+          <li>Mantenimiento en terreno</li>
+          <li>Reportes detallados por vehículo</li>
+          <li>Asistencia 24/7</li>
+          <li>Reducción de costos operativos</li>
+        </ul>
+      </div>
+      <div class="enterprise-card">
+        <h3>Plan Minería</h3>
+        <p>Soluciones especializadas para vehículos de trabajo pesado en entornos mineros.</p>
+        <ul>
+          <li>Análisis predictivo avanzado</li>
+          <li>Monitoreo de rendimiento</li>
+          <li>Optimización de operaciones</li>
+          <li>Informes de gestión</li>
+          <li>Diagnóstico remoto</li>
+        </ul>
+      </div>
+      <div class="enterprise-card">
+        <h3>Plan Logística</h3>
+        <p>Mantenimiento preventivo para flotas de reparto y distribución.</p>
+        <ul>
+          <li>Programas de mantenimiento</li>
+          <li>Control de consumo</li>
+          <li>Minimización de tiempos muertos</li>
+          <li>Reducción de costos operacionales</li>
+          <li>Soporte prioritario</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ubicacion">
+  <div class="container">
+    <div class="section-title">
+      <h2>Contacto y Cobertura</h2>
+      <p>Atendemos en toda Antofagasta con servicios a domicilio</p>
+    </div>
+    <div class="location-container">
+      <div class="location-info">
+        <h3>Contáctanos</h3>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-map-marked-alt"></i>
+          </div>
+          <div class="contact-text">
+            <h4>Zona de Cobertura</h4>
+            <p>Todo Antofagasta y alrededores</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-phone-alt"></i>
+          </div>
+          <div class="contact-text">
+            <h4>Teléfono</h4>
+            <p>+56 9 6864 6396</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="contact-text">
+            <h4>Email</h4>
+            <p>contacto@revline.cl</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="contact-text">
+            <h4>Horario</h4>
+            <p>Lunes a Sábado: 8:00 - 22:00</p>
+          </div>
+        </div>
+        <a href="https://wa.me/+56968646396" target="_blank" rel="noopener" class="btn" style="margin-top: 20px;" aria-label="Contactar por WhatsApp">
+          <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+        </a>
+      </div>
+      <div class="map-container">
+        <iframe
+          class="map-frame"
+          src="https://maps.google.com/maps?q=-23.5543450,-70.3961068&z=16&output=embed"
+          loading="lazy"
+          allowfullscreen
+          aria-label="Ubicación de RevLine en Antofagasta"
+        ></iframe>
+        <div class="map-overlay">
+          <p><i class="fas fa-map-marker-alt"></i> Ubicación de nuestro centro de operaciones</p>
+          <p>Servicio móvil en toda Antofagasta</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contacto">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>RevLine</h4>
+        <p>Servicios profesionales de diagnóstico y mecánica móvil en Antofagasta.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook de RevLine"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="Instagram de RevLine"><i class="fab fa-instagram"></i></a>
+          <a href="https://wa.me/+56968646396" aria-label="WhatsApp de RevLine"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Servicios</h4>
+        <ul class="footer-links">
+          <li><a href="#servicios" aria-label="Diagnóstico Computarizado">Diagnóstico Computarizado</a></li>
+          <li><a href="#servicios" aria-label="Mantenimiento Esencial">Mantenimiento Esencial</a></li>
+          <li><a href="#servicios" aria-label="Revisión Pre-compra">Revisión Pre-compra</a></li>
+          <li><a href="#empresas" aria-label="Planes Empresariales">Planes Empresariales</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Enlaces</h4>
+        <ul class="footer-links">
+          <li><a href="#servicios" aria-label="Servicios">Servicios</a></li>
+          <li><a href="#empresas" aria-label="Empresas">Empresas</a></li>
+          <li><a href="#ubicacion" aria-label="Contacto">Contacto</a></li>
+          <li><a href="#" aria-label="Preguntas Frecuentes">Preguntas Frecuentes</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <p><i class="fas fa-phone-alt"></i> +56 9 6864 6396</p>
+        <p><i class="fas fa-envelope"></i> contacto@revline.cl</p>
+        <p><i class="fas fa-clock"></i> Lunes a Sábado: 8:00 - 22:00</p>
+        <p><i class="fas fa-map-marker-alt"></i> Todo Antofagasta</p>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>© 2025 RevLine - Servicios Móviles de Diagnóstico y Mecánica | Antofagasta, Chile</p>
+    </div>
+  </div>
+</footer>
+
+<a id="whatsapp-float" href="https://wa.me/+56968646396" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp" tabindex="0">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+  const mobileToggle = document.getElementById('mobile-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  const header = document.querySelector('header');
+
+  mobileToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    mobileToggle.innerHTML = navMenu.classList.contains('active') ?
+      '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+    mobileToggle.setAttribute('aria-label', navMenu.classList.contains('active') ? 'Cerrar menú móvil' : 'Abrir menú móvil');
+    if (navMenu.classList.contains('active')) {
+      header.classList.remove('hidden');
+    }
+  });
+
+  document.querySelectorAll('#nav-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+      navMenu.classList.remove('active');
+      mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+      mobileToggle.setAttribute('aria-label', 'Abrir menú móvil');
+    });
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        window.scrollTo({
+          top: targetElement.offsetTop - 80,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05 });
+
+  let lastScrollY = window.scrollY;
+  let scrollTimeout;
+
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.service-card, .enterprise-card').forEach(element => {
+      observer.observe(element);
+    });
+
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+
+      // Actualizar clase 'scrolled'
+      header.classList.toggle('scrolled', currentScrollY > 50);
+
+      // Ocultar header al hacer scroll hacia abajo
+      if (currentScrollY > lastScrollY && currentScrollY > 50 && !navMenu.classList.contains('active')) {
+        header.classList.add('hidden');
+      } else {
+        header.classList.remove('hidden');
+      }
+
+      // Mostrar header al detener el scroll
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        if (!navMenu.classList.contains('active')) {
+          header.classList.remove('hidden');
+        }
+      }, 300);
+
+      lastScrollY = currentScrollY;
+    });
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    document.title = document.hidden ?
+      "¡Vuelve! Tenemos una oferta especial 🚗" :
+      "RevLine | Diagnóstico y Mecánica Móvil en Antofagasta";
+  });
+</script>
+</body>
+</html>
